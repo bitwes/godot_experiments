@@ -18,6 +18,7 @@ func _ready():
 	add_child(ee)
 	
 	er.call_methods(ee, ['method1', 'method2', 'wait', 'method3', 'wait2x', 'method1', 'wait2x', 'method2'])
+	#er.call_methods(ee, ['wait2x', 'method1', 'wait2x'])
 
 class Caller:
 	extends Node2D
@@ -29,19 +30,21 @@ class Caller:
 		add_child(timer)
 		timer.set_one_shot(true)
 		timer.set_wait_time(1)
+		add_user_signal('timeout')
 
 	func call_methods(obj, methods):
 		obj.caller = self
 		var call_return = null
 		dbg.p("########### START ###########")
+
 		for method in methods:
 			call_return = obj.call(method)
-			if(call_return != null):
-				_wait = true
-				while(_wait):
-					dbg.p('-- waiting --')
-					timer.start()
-					yield(timer, 'timeout')
+			while(call_return != null and call_return.is_valid()):
+				dbg.p('-- waiting --')
+				timer.start()
+				yield(timer, 'timeout')
+				call_return = call_return.resume()
+		
 		dbg.p("########### END ###########")
 	
 	func done_waiting():
@@ -66,7 +69,7 @@ class Callee:
 		dbg.p('in method 2')
 	
 	func method3():
-		dbg.p("in method tres")
+		dbg.p("in method three")
 	
 	func wait():
 		dbg.p("starting wait")
@@ -78,8 +81,11 @@ class Callee:
 	func wait2x():
 		dbg.p("starting wait2x")
 		timer.start()
-		yield(timer, 'timeout')
+		#yield(timer, 'timeout')
+		yield()#(caller, 'timeout')
 		dbg.p("back, gonna wait again")
 		timer.start()
-		yield(timer, 'timeout')		
-		caller.done_waiting()
+		#yield(timer, 'timeout')		
+		yield()#(caller, 'timeout')
+		#caller.done_waiting()
+		
