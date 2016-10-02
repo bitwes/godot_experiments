@@ -30,11 +30,9 @@ func _fixed_process(delta):
 	get_node("InfoLabel").set_text(to_s())
 	
 func match(car):
-	#var tti = time_to_impact(car)
-	#var tts = abs((car.speed - speed) / match_accel)
-	#var accel_to_match = abs((speed - car.speed) / tti)
 	if(matching):
-		# don't collide with other car.
+		# don't collide with other car since the rest
+		# isn't perfect.
 		if(distance_to(car) < 10 and speed != car.speed):
 			print("!! Well shit, we're gonna hit him.")
 			speed = car.speed
@@ -44,44 +42,63 @@ func match(car):
 	var time_to_match = ttm(car)
 	var ttos = abs((speed - car.speed)/match_accel)
 	
-	if(time_to_impact(car) < .5):#ttos > time_to_match):
+	if(time_to_impact(car) < .5):
+		# start stopping if moving forward
+		# not perfect, if other car too slow, we
+		# stop early and wait, but it's better
+		# than without it.
 		if(speed > 0):
 			target_speed = 0
 			acceleration = 1000
 			return
 
-		print('--- matching ---')
+		#print('--- matching ---')
 		emit_signal('match')
 		matching = true
-		var t = time_to_match
 		var stop_dis = 0
 		if(speed > 0):
 			var t_stop = (speed/(speed - car.speed)) * t
 			t = t - t_stop
 			stop_dis = get_distance_to_stop(t_stop)
-			print(str('t_stop = ', t_stop))
-			print(str('stop dist = ', stop_dis))
-		print(str('t = ', t))
-		print(str('ttm = ', time_to_match))
+			#print(str('t_stop = ', t_stop))
+			#print(str('stop dist = ', stop_dis))
 		
-		#acceleration = (speed - car.speed)/time_to_match
-		#acceleration = (speed - car.speed)/(2 * max_backup + pad)
 		var dis = max_backup + stop_dis + pad
-		print(str('total distance = ', dis))
-		acceleration = (2.0 * (dis + pad - (speed * t)))/pow(t,2)
-		
+		acceleration = (2.0 * (dis - (speed * t)))/pow(t,2)
 		target_speed = car.speed
+		#print(str('total distance = ', dis))
+		#print(str('t = ', t))
+		#print(str('ttm = ', time_to_match))
+		
 
-#	if(accel_to_match >= match_accel):
-#		acceleration = accel_to_match
-#		target_speed = car.speed
+
 func get_distance_to_stop(t):
 	var v0 = speed
 	var a = speed/t
 	var s =(v0 * t) + (.5 * a * pow(t,2))
 	return s
 
+func to_s():
+	var to_return = str('speed = ', speed, "\n")
+	to_return += str("target_speed = ", target_speed, "\n")
+	to_return += str("accel = ", acceleration, "\n")
+	to_return += str('tts = ', time_to_target_speed(), "\n")
+	to_return += str('pos = ', get_pos())
+	
+	if(other_car != null):
+		to_return += "\n\n-----\n"
+		to_return += str("tti = ", time_to_impact(other_car), "\n")
+		to_return += str("ttm = ", ttm(other_car), "\n")
+		to_return += str("ttos = ", abs((speed - other_car.speed)/match_accel), "\n")
+		to_return += str('distance = ', distance_to(other_car))
+	return to_return
+	
+func ttm(car):
+	return abs((distance_to(car) + max_backup)/car.speed)
 
+# ##############
+# Not changed
+# ##############
 func _approach(delta, accel):
 	if(accel == 0):
 		speed = target_speed
@@ -101,27 +118,12 @@ func _approach(delta, accel):
 			else:
 				speed += increment
 
-func to_s():
-	var to_return = str('speed = ', speed, "\n")
-	to_return += str("target_speed = ", target_speed, "\n")
-	to_return += str("accel = ", acceleration, "\n")
-	to_return += str('tts = ', time_to_target_speed(), "\n")
-	to_return += str('pos = ', get_pos())
-	
-	if(other_car != null):
-		to_return += "\n\n-----\n"
-		to_return += str("tti = ", time_to_impact(other_car), "\n")
-		to_return += str("ttm = ", ttm(other_car), "\n")
-		to_return += str("ttos = ", abs((speed - other_car.speed)/match_accel), "\n")
-		to_return += str('distance = ', distance_to(other_car))
-	return to_return
-	
 func time_to_target_speed():
 	var to_return = 0
 	if(acceleration != 0):
 		to_return = abs((target_speed - speed) / acceleration)
 	return to_return
-
+	
 func time_to_impact(car):
 	var to_return = 9999
 	var dist = distance_to(car)
@@ -160,6 +162,4 @@ func get_front_bumper_x():
 func get_back_bumper_x():
 	return get_pos().x - get_half_width()
 
-func ttm(car):
-	return abs((distance_to(car) + max_backup)/car.speed)
 	
