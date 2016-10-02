@@ -13,6 +13,7 @@ texture = ExtResource( 2 )
 
 [node name="InfoLabel" type="Label" parent="."]
 
+process/pause_mode = 2
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2

@@ -6,8 +6,8 @@ var orig = {
 var car1 = {
 	car = null,
 	speed = 0,
-	target_speed = 200,
-	acceleration = 400,
+	target_speed = 0,
+	acceleration = 0,
 	starting_pos = null
 }
 
@@ -23,6 +23,7 @@ var _paused = false
 func _ready():
 	car1.car = get_node("Car1")
 	car1.starting_pos = car1.car.get_pos()
+	car1.car.connect('match', self, '_on_match')
 	
 	car2.car = get_node("Car2")
 	car2.starting_pos = car2.car.get_pos()
@@ -31,6 +32,13 @@ func _ready():
 	get_node("Car1TargetSpeed").set_value(car1.target_speed)
 	get_node("Car2TargetSpeed").set_value(car2.target_speed)	
 	go()
+func _draw():
+	print('draw')
+	if(car1.car.matching):
+		var y = car1.car.get_pos().y -50
+		var x = car1.car.get_front_bumper_x()
+		draw_line(Vector2(x, y), Vector2(x - car1.car.max_backup,y), Color(1, 0, 0), 5)
+		#_toggle_pause()
 
 func _reset_car(car):
 	car.car.speed = car.speed
@@ -38,12 +46,15 @@ func _reset_car(car):
 	car.car.acceleration = car.acceleration
 	car.car.set_pos(car.starting_pos)
 	car.car.matching = false
+	update()
 
 func _reset_cars():
 	_reset_car(car1)
 	_reset_car(car2)
 
-
+func _on_match():
+	update()
+	
 func _on_ResetButton_pressed():
 	_reset_cars()
 	go()
@@ -55,14 +66,14 @@ func go():
 func _toggle_pause():
 	_paused = !_paused
 	get_tree().set_pause(_paused)
-
-func _on_PauseButton_pressed():
-	_toggle_pause()
 	var btn = get_node("PauseButton")
 	if(_paused):
 		btn.set_text("Run")
 	else:
 		btn.set_text("Pause")
+
+func _on_PauseButton_pressed():
+	_toggle_pause()
 
 func _move_car(car, x):
 	car.set_pos(car.get_pos() + Vector2(x, 0))

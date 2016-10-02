@@ -1,13 +1,26 @@
+#current speed.
 var speed = 0
+# desired speed
 var target_speed = 0
+# acceleration used to get from speed to target_speed
 var acceleration = 20
+# The other car to match
 var other_car = null
+# default acceleration to use for matching.  this
+# is used in calculations as a guide to determine 
+# if we should match speeds or not.
 var match_accel = 700.0
+# flag to indicate if we are matching.  Used to not
+# continuously try to match speeds since we want to
+# get it right on first calculation.
 var matching = false
+# the most distance we want to cover backwards
+# before we are up to speed with the other car.
 var max_backup = 100
 
 func _ready():
 	set_fixed_process(true)
+	add_user_signal('match')
 	
 func _fixed_process(delta):
 	if(other_car != null):
@@ -21,25 +34,53 @@ func match(car):
 	#var tts = abs((car.speed - speed) / match_accel)
 	#var accel_to_match = abs((speed - car.speed) / tti)
 	if(matching):
+		# don't collide with other car.
+		if(distance_to(car) < 10 and speed != car.speed):
+			print("!! Well shit, we're gonna hit him.")
+			speed = car.speed
 		return
-		
 		
 	var pad = 10
 	var time_to_match = ttm(car)
-	var tts = abs((speed - car.speed)/match_accel)
+	var ttos = abs((speed - car.speed)/match_accel)
 	
-	if(tts > time_to_match):
+	if(time_to_impact(car) < .5):#ttos > time_to_match):
+		if(speed > 0):
+			target_speed = 0
+			acceleration = 1000
+			return
+
+		print('--- matching ---')
+		emit_signal('match')
 		matching = true
+		var t = time_to_match
+		var stop_dis = 0
+		if(speed > 0):
+			var t_stop = (speed/(speed - car.speed)) * t
+			t = t - t_stop
+			stop_dis = get_distance_to_stop(t_stop)
+			print(str('t_stop = ', t_stop))
+			print(str('stop dist = ', stop_dis))
+		print(str('t = ', t))
+		print(str('ttm = ', time_to_match))
+		
 		#acceleration = (speed - car.speed)/time_to_match
 		#acceleration = (speed - car.speed)/(2 * max_backup + pad)
-		acceleration = 2.0 * (max_backup + pad - (speed * time_to_match))
-		acceleration = acceleration / pow(time_to_match, 2)
+		var dis = max_backup + stop_dis + pad
+		print(str('total distance = ', dis))
+		acceleration = (2.0 * (dis + pad - (speed * t)))/pow(t,2)
 		
 		target_speed = car.speed
 
 #	if(accel_to_match >= match_accel):
 #		acceleration = accel_to_match
 #		target_speed = car.speed
+func get_distance_to_stop(t):
+	var v0 = speed
+	var a = speed/t
+	var s =(v0 * t) + (.5 * a * pow(t,2))
+	return s
+
 
 func _approach(delta, accel):
 	if(accel == 0):
@@ -68,9 +109,11 @@ func to_s():
 	to_return += str('pos = ', get_pos())
 	
 	if(other_car != null):
-		to_return += str("\ntti = ", time_to_impact(other_car), "\n")
+		to_return += "\n\n-----\n"
+		to_return += str("tti = ", time_to_impact(other_car), "\n")
 		to_return += str("ttm = ", ttm(other_car), "\n")
-		to_return += str("ttos = ", abs((speed - other_car.speed)/match_accel))
+		to_return += str("ttos = ", abs((speed - other_car.speed)/match_accel), "\n")
+		to_return += str('distance = ', distance_to(other_car))
 	return to_return
 	
 func time_to_target_speed():
