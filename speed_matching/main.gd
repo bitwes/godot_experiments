@@ -20,7 +20,6 @@ var car2 = {
 }
 var _paused = false
 
-
 func _ready():
 	car1.car = get_node("Car1")
 	car1.starting_pos = car1.car.get_pos()
@@ -65,14 +64,12 @@ func _on_PauseButton_pressed():
 	else:
 		btn.set_text("Pause")
 
-
 func _move_car(car, x):
 	car.set_pos(car.get_pos() + Vector2(x, 0))
 
 func _on_MoveRightButton_pressed():
 	_move_car(car1.car, 100)
 	_move_car(car2.car, 100)
-
 
 func _on_MoveLeftButton_pressed():
 	_move_car(car1.car, -100)

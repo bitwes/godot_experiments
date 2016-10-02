@@ -30,10 +30,11 @@ func match(car):
 	
 	if(tts > time_to_match):
 		matching = true
-		acceleration = (speed - car.speed)/time_to_match
+		#acceleration = (speed - car.speed)/time_to_match
 		#acceleration = (speed - car.speed)/(2 * max_backup + pad)
-		#acceleration = 2.0 * (max_backup + pad - (speed * time_to_match))
-		#acceleration = acceleration / pow(time_to_match, 2)
+		acceleration = 2.0 * (max_backup + pad - (speed * time_to_match))
+		acceleration = acceleration / pow(time_to_match, 2)
+		
 		target_speed = car.speed
 
 #	if(accel_to_match >= match_accel):
@@ -45,11 +46,9 @@ func _approach(delta, accel):
 		speed = target_speed
 	
 	if(speed != target_speed):
-		var dir = 1
-		if(target_speed < speed):
-			dir = -1
-		
+		var dir = sign(target_speed - speed)
 		var increment = delta * abs(accel) * dir
+		
 		if(dir > 0):
 			if(speed + increment > target_speed):
 				speed = target_speed
@@ -65,7 +64,9 @@ func to_s():
 	var to_return = str('speed = ', speed, "\n")
 	to_return += str("target_speed = ", target_speed, "\n")
 	to_return += str("accel = ", acceleration, "\n")
-	to_return += str('tts = ', time_to_target_speed())
+	to_return += str('tts = ', time_to_target_speed(), "\n")
+	to_return += str('pos = ', get_pos())
+	
 	if(other_car != null):
 		to_return += str("\ntti = ", time_to_impact(other_car), "\n")
 		to_return += str("ttm = ", ttm(other_car), "\n")
