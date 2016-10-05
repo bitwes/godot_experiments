@@ -21,6 +21,8 @@ var max_backup = 100
 func _ready():
 	set_fixed_process(true)
 	add_user_signal('match')
+	add_user_signal('mouse_down')
+	add_user_signal('mouse_up')
 	
 func _fixed_process(delta):
 	if(other_car != null):
@@ -56,6 +58,7 @@ func match(car):
 		emit_signal('match')
 		matching = true
 		var stop_dis = 0
+		var t = ttm(car)
 		if(speed > 0):
 			var t_stop = (speed/(speed - car.speed)) * t
 			t = t - t_stop
@@ -70,8 +73,6 @@ func match(car):
 		#print(str('t = ', t))
 		#print(str('ttm = ', time_to_match))
 		
-
-
 func get_distance_to_stop(t):
 	var v0 = speed
 	var a = speed/t
@@ -161,5 +162,12 @@ func get_front_bumper_x():
 
 func get_back_bumper_x():
 	return get_pos().x - get_half_width()
-
 	
+func _on_Area2D_input_event( viewport, event, shape_idx ):
+	if(event.type == InputEvent.MOUSE_BUTTON):
+		if(event.is_pressed()):
+			emit_signal('mouse_down')
+		else:
+			emit_signal('mouse_up')
+		
+
