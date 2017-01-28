@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=1]
+
+[ext_resource path="res://addons/my_plugin_node/custom_dialog.gd" type="Script" id=1]
+[ext_resource path="res://addons/my_plugin_node/icon.png" type="Texture" id=2]
+
+[node name="testNode" type="Node2D"]
+
+[node name="CustomDialog" type="WindowDialog" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 8.0
+margin/top = 33.0
+margin/right = 529.0
+margin/bottom = 301.0
+popup/exclusive = false
+window/title = "Hello World"
+script/script = ExtResource( 1 )
+__meta__ = { "_editor_icon":ExtResource( 2 ) }
+
+
