@@ -16,6 +16,8 @@ func hardcoded_circle_text():
 	    draw_set_transform(Vector2(0, 0), deg2rad(i * x - (my_string.length()/2*x)), Vector2(1,1))
 	    draw_char(font, Vector2(0, -30), my_string[my_string.length()-i-1], "", Color(0, 0, 0))
 
+# adapted from cdqwertz's forum post at
+# https://godotdevelopers.org/forum/discussion/comment/19449#Comment_19449
 func draw_cirlce_text(text, font, origin, radius, color=Color(0, 0, 0)):
 	var x = (360) / text.length()
 	var scale = Vector2(1, 1)
