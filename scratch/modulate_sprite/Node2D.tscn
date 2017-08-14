@@ -1,0 +1,61 @@
+[gd_scene load_steps=7 format=1]
+
+[ext_resource path="res://modulate_sprite/color_picker.gd" type="Script" id=1]
+[ext_resource path="res://modulate_sprite/img.png" type="Texture" id=2]
+[ext_resource path="res://modulate_sprite/mustang.png" type="Texture" id=3]
+[ext_resource path="res://modulate_sprite/mustang_inside.png" type="Texture" id=4]
+[ext_resource path="res://modulate_sprite/mustang_body.png" type="Texture" id=5]
+[ext_resource path="res://modulate_sprite/mustang_undercoat.png" type="Texture" id=6]
+
+[node name="Node2D" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="ColorPicker" type="ColorPicker" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 340.0
+margin/top = 54.0
+margin/right = 628.0
+margin/bottom = 495.0
+alignment = 0
+
+[node name="Sprite" type="Sprite" parent="."]
+
+transform/pos = Vector2( 174.48, 186.421 )
+texture = ExtResource( 2 )
+
+[node name="Mustang" type="Sprite" parent="."]
+
+transform/pos = Vector2( 746.29, 132.801 )
+texture = ExtResource( 3 )
+
+[node name="Mustang1" type="Sprite" parent="."]
+
+transform/pos = Vector2( 747.329, 239.197 )
+texture = ExtResource( 3 )
+
+[node name="Mustang2" type="Node2D" parent="."]
+
+transform/pos = Vector2( 754.973, 350.286 )
+
+[node name="Interior" type="Sprite" parent="Mustang2"]
+
+transform/pos = Vector2( -6.10352e-05, 0 )
+texture = ExtResource( 4 )
+
+[node name="Body" type="Sprite" parent="Mustang2"]
+
+texture = ExtResource( 5 )
+
+[node name="Undercoat" type="Sprite" parent="Mustang2"]
+
+visibility/opacity = 0.5
+texture = ExtResource( 6 )
+
+[connection signal="color_changed" from="ColorPicker" to="." method="_on_ColorPicker_color_changed"]
+
+
