@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=1]
+[gd_scene load_steps=8 format=1]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://flash_white.shd" type="Shader" id=2]
@@ -10,6 +10,25 @@ shader/shader = ExtResource( 2 )
 shader/shading_mode = 0
 shader_param/amount = 0.0
 shader_param/should = true
+
+[sub_resource type="CanvasItemMaterial" id=5]
+
+shader/shader = ExtResource( 2 )
+shader/shading_mode = 0
+shader_param/amount = 0.0
+shader_param/should = false
+
+[sub_resource type="Animation" id=4]
+
+resource/name = "flash_other"
+length = 0.31
+loop = false
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("DontFlash:material/material:shader_param/amount")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0, 0.24, 0.29 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 0.0 ] }
 
 [sub_resource type="Animation" id=3]
 
@@ -38,7 +57,19 @@ script/script = ExtResource( 1 )
 [node name="FlashWhiteSprite" type="Sprite" parent="."]
 
 material/material = SubResource( 2 )
-transform/pos = Vector2( 71, 92 )
+transform/pos = Vector2( 84.5053, 92 )
+texture = ExtResource( 3 )
+
+[node name="DontFlash" type="Sprite" parent="."]
+
+material/material = SubResource( 2 )
+transform/pos = Vector2( 295.403, 94.5038 )
+texture = ExtResource( 3 )
+
+[node name="HandMade" type="Sprite" parent="."]
+
+material/material = SubResource( 5 )
+transform/pos = Vector2( 226.433, 289.15 )
 texture = ExtResource( 3 )
 
 [node name="MakeFlashWhite" type="Button" parent="."]
@@ -47,10 +78,26 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 0.0
-margin/right = 151.0
-margin/bottom = 46.0
+margin/left = 10.0
+margin/top = 8.0
+margin/right = 161.0
+margin/bottom = 54.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Flash White"
+flat = false
+
+[node name="FlashTheDontFlash" type="Button" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 221.0
+margin/top = 6.0
+margin/right = 372.0
+margin/bottom = 52.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
@@ -62,6 +109,7 @@ flat = false
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
+anims/flash_other = SubResource( 4 )
 anims/flash_white = SubResource( 3 )
 playback/active = true
 playback/speed = 1.0
@@ -69,5 +117,7 @@ blend_times = [  ]
 autoplay = ""
 
 [connection signal="pressed" from="MakeFlashWhite" to="." method="_on_MakeFlashWhite_pressed"]
+
+[connection signal="pressed" from="FlashTheDontFlash" to="." method="_on_FlashTheDontFlash_pressed"]
 
 
