@@ -1,3 +1,6 @@
+# RUN THIS SCRIPT WITH THE -p option so that it will not Autoload.  Without the
+# -p option the making of random things doesn't matter b/c the project autoloads
+# a TreelessSingleton
 extends SceneTree
 
 var TreelessSingleton = load('treeless_singleton.gd')
