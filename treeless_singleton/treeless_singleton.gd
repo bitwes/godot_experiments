@@ -30,6 +30,8 @@ static func get_inst():
 
 	return to_return
 
+
+var some_state = 'not set yet'
 func do_something():
 	print('did it')
 
