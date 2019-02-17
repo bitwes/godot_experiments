@@ -27,4 +27,6 @@ func fill_rands(how_many=100):
 
 func _init():
 	fill_rands()
+	print("\n --- Do it again ---\n")
+	fill_rands()
 	quit()
